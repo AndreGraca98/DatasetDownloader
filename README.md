@@ -4,7 +4,7 @@ Download a dataset by web scraping.
 
 Currently supports download and unziping of the datasets: [SiW](#siw) | [S3DFM](#s3dfm)
 
-## SiW
+## [SiW](http://cvlab.cse.msu.edu/siw-spoof-in-the-wild-database.html)
 
 Download and unzip the SiW dataset using threads to folders ```./SIW_ziped/``` and ```./SIW_unziped/```
 
@@ -12,7 +12,7 @@ Download and unzip the SiW dataset using threads to folders ```./SIW_ziped/``` a
 python dataset_builder.py SIW --user=<provided-by-the-siw-authors> --pwd=<provided-by-the-siw-authors> -tu
 ```
 
-## S3DFM
+## [S3DFM](https://groups.inf.ed.ac.uk/trimbot2020/DYNAMICFACES/)
 
 Download and unzip the S3DFM dataset to folders ```./S3DFM_ziped/``` and ```./S3DFM_unziped/```
 
