@@ -2,22 +2,30 @@
 
 Download a dataset by web scraping.
 
-Currently supports download and unziping of the datasets: [SiW](#siw) | [S3DFM](#s3dfm)
+Currently supports download and unziping of the datasets: [SiW](#siw) | [S3DFM](#s3dfm) | [ImageNet](#imagenet)
 
-## [SiW](http://cvlab.cse.msu.edu/siw-spoof-in-the-wild-database.html)
+## SiW
 
-Download and unzip the SiW dataset using threads to folders ```./SIW_ziped/``` and ```./SIW_unziped/```
+Download and unzip the SiW dataset using threads to folders ```./siw_ziped/``` and ```./siw_unziped/```
 
 ```bash
-python dataset_builder.py SIW --user=<provided-by-the-siw-authors> --pwd=<provided-by-the-siw-authors> -tu
+python dataset_builder.py siw --user=<provided-by-the-siw-authors> --pwd=<provided-by-the-siw-authors> -tu
 ```
 
-## [S3DFM](https://groups.inf.ed.ac.uk/trimbot2020/DYNAMICFACES/)
+## S3DFM
 
-Download and unzip the S3DFM dataset to folders ```./S3DFM_ziped/``` and ```./S3DFM_unziped/```
+Download and unzip the S3DFM dataset to folders ```./s3dfm_ziped/``` and ```./s3dfm_unziped/```
 
 ```bash
-python dataset_builder.py S3DFM -du
+python dataset_builder.py s3dfm -du
+```
+
+## ImageNet
+
+Download and unzip the ImageNet dataset to folders ```./imagenet_ziped/``` and ```./imagenet_unziped/```
+
+```bash
+python dataset_builder.py imagenet -du
 ```
 
 ### USAGE
@@ -30,10 +38,10 @@ python dataset_builder.py -h
 usage: dataset_builder.py [-h] [--user USER] [--pwd PASSWORD]
                           [--zdir ZIPED_DIR] [--uzdir UNZIPED_DIR] [-t] [-d]
                           [-u] [-n]
-                          {SIW,S3DFM}
+                          {siw,s3dfm,imagenet}
 
 positional arguments:
-  {SIW,S3DFM}           Builder
+  {siw,s3dfm}           Builder
 
 optional arguments:
   -h, --help            show this help message and exit

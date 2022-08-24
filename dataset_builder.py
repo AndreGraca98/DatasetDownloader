@@ -176,7 +176,7 @@ class S3DFMBuilder(Downloader):
 
         return sorted(urls2download, key=lambda x: x.lower())
 
-    def unzip(self, to_folder:str='../'):
+    def unzip(self, to_folder:str='.'):
         """ Combines all the ziped parts and unzips the complete zip to a folder
 
         Args:
@@ -200,17 +200,68 @@ class S3DFMBuilder(Downloader):
         raise NotImplementedError
     
     
+class ImageNetBuilder(Downloader):
+    files = {'winter21_whole.tar.gz':'ab313ce03179fd803a401b02c651c0a2', 'imagenet21k_resized.tar.gz':'c314e95f17e357b3e9cbf0a18ef7ecd6', 'imagenet10k_eccv2010.tar':None, 'tiny-imagenet-200.zip':None}
+    def get_targets_list(self)-> List[str]:
+        # return ['tiny-imagenet-200.zip']
+        return list(self.files.keys())
     
+    def checksum(self, verbose=False):
+        tqdm.write('Checksum...')
+        
+        for _file, _hash in self.files.items():
+            try:
+                if _hash is None: 
+                    if verbose: tqdm.write(f'File: {_file}\t|\thash: {_hash}\t')
+                    continue
+                filename = str(self.zips_dir / _file)
+                
+                md5_hash = hashlib.md5()
+                with open(filename,"rb") as f:
+                    for byte_block in iter(lambda: f.read(4096),b""):
+                        md5_hash.update(byte_block)
+                    
+                    result = md5_hash.hexdigest() == _hash
+                    
+                if verbose: tqdm.write(f'File: {_file}\t|\thash: {_hash}\t|\tchecksum matches: {result}')
+                
+            except FileNotFoundError:
+                pass
+    
+    
+    def download(self):
+        super().download()
+
+        self.checksum(verbose=True)
+        
+    def unzip(self, to_folder:str='.'):
+        to_folder = Path(to_folder).resolve()
+        self._make_dir(to_folder)
+        files = Path(self.zips_dir).resolve().rglob('*')
+        
+        for zip_file in tqdm(files):
+            if zip_file.suffix == '.zip':
+                cmd = f'unzip -n -qq {zip_file} -d {to_folder / zip_file.stem}'
+            elif zip_file.suffix == '.gz':
+                cmd = f'cd {self.zips_dir} && tar -xf {zip_file} -C {to_folder} && cd ..'
+            else:
+                raise TypeError(f'Unknown file type. Expected type ".zip" or ".gz" . Got: {zip_file.suffix}')
+            
+            os.system(cmd)
+            
+        if self.notify: email_notif('Done unziping ImageNet')
+            
     
     
 class BUILDER(Enum):
-    SIW = SiWBuilder
-    S3DFM = S3DFMBuilder
+    siw = SiWBuilder
+    s3dfm = S3DFMBuilder
+    imagenet = ImageNetBuilder
 
 class BUILDER_URL(Enum):
-    SIW = 'https://www.egr.msu.edu/computervision/SiW_database/'
-    S3DFM = 'https://groups.inf.ed.ac.uk/trimbot2020/DYNAMICFACES/'
-
+    siw = 'https://www.egr.msu.edu/computervision/SiW_database/'
+    s3dfm = 'https://groups.inf.ed.ac.uk/trimbot2020/DYNAMICFACES/'
+    imagenet = 'https://image-net.org/data/'
 
 assertion_builder_msg = f'Missing keys in BUILDER or BUILDER_URL enums. Got BUILDER keys:{set(BUILDER.__members__.keys())} ; BUILDER_URL keys:{set(BUILDER_URL.__members__.keys())}'
 assert set(BUILDER.__members__.keys()) == set(BUILDER_URL.__members__.keys()), assertion_builder_msg
